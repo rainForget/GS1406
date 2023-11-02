@@ -1,0 +1,15 @@
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\ToolTest2.exe
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\ToolTest2.dll
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\ToolTest2.deps.json
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\ToolTest2.runtimeconfig.json
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\ToolTest2.pdb
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\System.IO.Ports.dll
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\runtimes\linux-arm\native\libSystem.IO.Ports.Native.so
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\runtimes\linux-arm64\native\libSystem.IO.Ports.Native.so
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\runtimes\linux-x64\native\libSystem.IO.Ports.Native.so
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\runtimes\osx-arm64\native\libSystem.IO.Ports.Native.dylib
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\runtimes\osx-x64\native\libSystem.IO.Ports.Native.dylib
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\runtimes\unix\lib\net6.0\System.IO.Ports.dll
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\runtimes\win\lib\net6.0\System.IO.Ports.dll
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\InTheHand.Net.Personal.dll
+E:\35323\vsproject\VsProject\ToolTest2\bin\Release\net6.0-windows\publish\InTheHand.Net.Personal.xml
