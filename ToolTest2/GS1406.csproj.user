@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_LastSelectedProfileId>E:\35323\vsproject\VsProject\ToolTest\ToolTest2\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="forms\DialogCheck.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="forms\DialogSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="forms\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="forms\FormAuto.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="forms\FormDut.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="forms\FormMFI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="forms\FormStart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>
