@@ -218,7 +218,6 @@ namespace ToolTest2.forms
                 SerialPort2.PortName = PortList.Text.ToString(); ; // 端口号
                 SerialPort2.Encoding = Encoding.GetEncoding("UTF-8");
                 SerialPort2.BaudRate = 921600; // 写死  串口通信的波特率
-                //SerialPort2.BaudRate = 115200; // 写死  串口通信的波特率
             }
             else
             {

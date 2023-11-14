@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Timers;
 using GS1406.forms;
+using InTheHand.Net.Sockets;
 using Microsoft.VisualBasic.ApplicationServices;
 using ToolTest2.Bean;
 using ToolTest2.forms;
