@@ -377,7 +377,7 @@
             label1.Name = "label1";
             label1.Size = new Size(632, 45);
             label1.TabIndex = 74;
-            label1.Text = "GS-1406";
+            label1.Text = "GS-1406/1408";
             label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // timer1

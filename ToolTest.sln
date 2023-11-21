@@ -7,6 +7,8 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ToolTest2Setup", "..\ToolTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GS1406", "ToolTest2\GS1406.csproj", "{3C36A0B6-8197-41E8-9E58-6931408F3CBA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GS-7130", "GS-7130\GS-7130.csproj", "{91A9A5F4-4549-449B-AC39-668AD52B81FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,18 @@ Global
 		{3C36A0B6-8197-41E8-9E58-6931408F3CBA}.Release|x64.Build.0 = Release|x64
 		{3C36A0B6-8197-41E8-9E58-6931408F3CBA}.Release|x86.ActiveCfg = Release|x86
 		{3C36A0B6-8197-41E8-9E58-6931408F3CBA}.Release|x86.Build.0 = Release|x86
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Debug|x64.Build.0 = Debug|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Debug|x86.Build.0 = Debug|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Release|x64.ActiveCfg = Release|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Release|x64.Build.0 = Release|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Release|x86.ActiveCfg = Release|Any CPU
+		{91A9A5F4-4549-449B-AC39-668AD52B81FD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

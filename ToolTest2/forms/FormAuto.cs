@@ -749,7 +749,7 @@ namespace GS1406.forms
                     //        }
                     //    });
                     //    break;
-                    case 0x32:
+                    case 0x01:
                         if (data[6] == 0x00)
                         {
                             Status = 0;
@@ -892,13 +892,15 @@ namespace GS1406.forms
         private async void buttonResetMode_Click(object sender, EventArgs e)
         {
             ClearList();
-            byte[] dataBytes = new byte[6];
+            byte[] dataBytes = new byte[8];
             dataBytes[0] = 0x05;
             dataBytes[1] = 0x5A;
-            dataBytes[2] = 0x02;
+            dataBytes[2] = 0x04;
             dataBytes[3] = 0x00;
-            dataBytes[4] = 0x32;
-            dataBytes[5] = 0x00;
+            dataBytes[4] = 0x01;
+            dataBytes[5] = 0x11;
+            dataBytes[6] = 0x95;
+            dataBytes[7] = 0x00;
             sp.sendCommend(dataBytes);
         }
 
