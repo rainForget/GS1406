@@ -364,7 +364,7 @@
             // pictureBox1
             // 
             pictureBox1.BackColor = SystemColors.ActiveCaption;
-            pictureBox1.Location = new Point(0, 73);
+            pictureBox1.Location = new Point(164, 504);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(661, 360);
             pictureBox1.TabIndex = 73;

@@ -10,8 +10,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using GS_7130.Bean;
-using GS_7130.forms;
+using GS_1406;
+using GS_1406.forms;
+using ToolTest2.Bean;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace ToolTest2.forms
@@ -89,13 +90,13 @@ namespace ToolTest2.forms
             {
                 if (select == 0)
                 {
-                    FormMainRW frm = new FormMainRW();
+                    Form1 frm = new Form1();
                     frm.Tag = serialPort;
                     frm.ShowDialog();
                 }
                 else if (select == 1)
                 {
-                    FormMainRead frm = new FormMainRead();
+                    Form2 frm = new Form2();
                     frm.Tag = serialPort;
                     frm.ShowDialog();
                 }

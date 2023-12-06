@@ -1,6 +1,6 @@
 using ToolTest2.forms;
 
-namespace GS_7130
+namespace GS_1406
 {
     internal static class Program
     {

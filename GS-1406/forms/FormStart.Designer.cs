@@ -50,7 +50,7 @@
             // 
             comboBox1.ForeColor = SystemColors.MenuHighlight;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "GS-7130" });
+            comboBox1.Items.AddRange(new object[] { "GS-1406" });
             comboBox1.Location = new Point(215, 26);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(121, 25);

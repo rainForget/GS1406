@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -21,7 +22,7 @@ namespace ToolTest2.Util
         public byte[] currentData;
         public Boolean ReceiveFlag = false;
         public int failNumber = 0;
-        Dictionary<string, string> logList = new Dictionary<string, string>();
+
 
         /// <summary>
         /// 获取数据接收委托
@@ -44,13 +45,14 @@ namespace ToolTest2.Util
         /// <summary>
         /// 获取定时任务委托
         /// </summary>
-        public delegate void ReceiveDelegateFlag(byte[] bytes );
+        public delegate void ReceiveDelegateFlag(byte[] bytes);
         /// <summary>
         /// 获取定时任务事件
         /// </summary>
         public event ReceiveDelegateFlag receiveDeleteFlag;
 
-        public SppUtil(SerialPort serialPort) { 
+        public SppUtil(SerialPort serialPort)
+        {
             this.SeriaPort1 = serialPort;
         }
 
@@ -75,10 +77,8 @@ namespace ToolTest2.Util
             try
             {
                 SeriaPort1.WriteLine(dateString + "\r\n");
-                saveLog(DateTime.Now + "");
-                saveLog(dateString);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message.ToString());
             }
@@ -87,9 +87,10 @@ namespace ToolTest2.Util
         public async Task sendCommend(byte[] dataBytes)
         {
             SeriaPort1.Write(dataBytes, 0, dataBytes.Length);
-            saveLog(DateTime.Now + "");
-            saveLog("发送指令");
-            saveLog(FormateUtil.byteArrayToHexString(dataBytes));
+            //for (int i = 0; i < dataBytes.Length; i++)
+            //{
+            //    saveLog(String.Format("date[" + i + "] = " + dataBytes[i]));
+            //}
             timer = new System.Timers.Timer(3000);
             timer.Elapsed += new ElapsedEventHandler(timer_Tick);
             timer.Interval = 3000;
@@ -98,37 +99,43 @@ namespace ToolTest2.Util
             currentData = dataBytes;
             timer.Enabled = true;
             timer.Start();
+            Debug.WriteLine("Start");
         }
 
-        private  void timer_Tick(object sender, ElapsedEventArgs e)
+        private void timer_Tick(object sender, ElapsedEventArgs e)
         {
-            if(!ReceiveFlag) {
+            if (!ReceiveFlag)
+            {
                 if (this.failNumber < 1)
                 {
                     this.failNumber += 1;
                     timer.Stop();
+                    Debug.WriteLine("Dispose1");
                     sendCommend(currentData);
                 }
                 else
                 {
                     receiveDeleteFlag(currentData);
                     timer.Stop();
+                    Debug.WriteLine("Dispose2");
                     this.failNumber = 0;
                 }
-                
+
             }
         }
 
-        private void BlueToothDataReceived(object o, SerialDataReceivedEventArgs e)
+        private async void BlueToothDataReceived(object o, SerialDataReceivedEventArgs e)
         {
             Thread.Sleep(1000);
             string str = SeriaPort1.ReadExisting(); //以字符串方式读
 
             byte[] data = System.Text.Encoding.UTF8.GetBytes(str);
+            
             try
             {
                 if (data[0] != 5)
                 {
+                    Debug.WriteLine(str);
                     receiveDelegateString(str);
                 }
                 else
@@ -137,82 +144,17 @@ namespace ToolTest2.Util
                     {
                         ReceiveFlag = true;
                         timer.Stop();
+                        Debug.WriteLine("Dispose3" + data[4]);
                         this.failNumber = 0;
 
                     }
                     receiveDelegate(data);
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 //MessageBox.Show(ex.Message.ToString());
             }
         }
-
-        private void saveLog(byte[] bytes)
-        {
-            try
-            {
-                int month = DateTime.Now.Month;
-                int day = DateTime.Now.Day;
-                string adr = month + "/" + day;
-
-                if (!Directory.Exists(adr))
-                {
-                    Directory.CreateDirectory(adr);
-                }
-                string adrss = adr + "/" + "log.bin";
-                StreamWriter s = new StreamWriter(adrss, true);
-                foreach (byte b in bytes)
-                {
-                    s.Write(b);
-                    //stringWriter.Write(b);
-                }
-                s.WriteLine();
-                s.Close();
-
-
-                //FileStream fs = new FileStream(adr + "/" + "log.bin", FileMode.OpenOrCreate);
-
-                //foreach (byte b in bytes)
-                //{
-                //    fs.WriteByte(b);
-                //   //stringWriter.Write(b);
-                //}
-                //fs.Close();
-                ////stringWriter.Close();
-
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("日志存储异常" + ex.Message);
-            }
-        }
-
-        private void saveLog(string s)
-        {
-            try
-            {
-                int month = DateTime.Now.Month;
-                int day = DateTime.Now.Day;
-                string adr = month + "/" + day;
-
-                if (!Directory.Exists(adr))
-                {
-                    Directory.CreateDirectory(adr);
-                }
-                string adrss = adr + "/" + "log.bin";
-                StreamWriter streamWriter = new StreamWriter(adrss, true);
-                streamWriter.WriteLine(s);
-                streamWriter.Close();
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("日志存储异常" + ex.Message);
-            }
-        }
-
     }
-
 }

@@ -62,7 +62,8 @@ namespace GS1406.forms
             if (this.textBox1.TextLength == 12)
             {
                 ClearList();
-                string dateString = ">SPP_CONN=" + textBox1.Text;
+                //string dateString = ">SPP_CONN=" + textBox1.Text;
+                string dateString = ">CONN=" + textBox1.Text;
                 sp.sendCommend(dateString);
             }
         }
@@ -100,7 +101,7 @@ namespace GS1406.forms
             {
                 Status = 0;
                 falg = 1;
-                GetMFI();
+                sendBleCase();
             }
             if (date.Contains("SppDisconnectInd,spp_disconnect_abnormal_disconnect"))
             {
@@ -109,6 +110,12 @@ namespace GS1406.forms
             }
         }
 
+
+        private void sendBleCase()
+        {
+            string dateString = "blemaster mode";
+            sp.sendCommend(dateString);
+        }
         public void dataReceive(byte[] data)
         {
             BlueToothReceivedData += DateTime.Now + "\r\n";
