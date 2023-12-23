@@ -146,7 +146,7 @@
             label17.Name = "label17";
             label17.Size = new Size(100, 23);
             label17.TabIndex = 16;
-            label17.Text = "左耳MFI";
+            label17.Text = "左耳MFI Chip check";
             label17.TextAlign = ContentAlignment.MiddleRight;
             // 
             // labelRSoftVersion
@@ -366,7 +366,7 @@
             label15.Name = "label15";
             label15.Size = new Size(100, 23);
             label15.TabIndex = 18;
-            label15.Text = "右耳MFI";
+            label15.Text = "右耳MFI Chip check";
             label15.TextAlign = ContentAlignment.MiddleRight;
             // 
             // label11

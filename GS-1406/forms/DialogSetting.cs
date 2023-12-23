@@ -75,20 +75,25 @@ namespace ToolTest2.forms
             checkBoxGetBattery.Checked = settingBean.IsGetBatteryLevel;
             checkBoxGetSerialNum.Checked = settingBean.IsGetSerialNum;
             checkBoxSetSerialNum.Checked = settingBean.IsSetSerialNum;
-            checkBoxEnterDut.Checked = settingBean.IsEnterDutMode;
             checkBoxEnterShip.Checked = settingBean.IsEnterShipMode;
             checkBoxGetMfi.Checked = settingBean.IsGetMfiStatus;
             checkBoxGetCaseSN.Checked = settingBean.IsGetCaseSerialNum;
             checkBoxSetCaseSN.Checked = settingBean.IsSetCaseSerialNum;
             checkBoxGetProductId.Checked = settingBean.IsGetProductId;
             checkBoxSetProductId.Checked = settingBean.IsSetProductId;
+            checkBoxResetMode.Checked = settingBean.IsResetMode;
             textBoxVersion.Text = settingBean.SoftVersion;
             textBoxHardVersion.Text = settingBean.HardVersion;
             softVersion = settingBean.SoftVersion;
-            textBox1.Text = settingBean.BatteryValue;
+            textBoxBatteryMin.Text = settingBean.BatteryValueMin;
+            textBoxBatteryMax.Text = settingBean.BatteryValueMax;
             textBox2.Text = settingBean.ProductId;
             hardVersion = settingBean.HardVersion;
             comboBoxColor.SelectedIndex = comboBoxColor.Items.IndexOf(settingBean.Color);
+            rbSingle.Checked = !settingBean.IsDouble;
+            rbDouble.Checked = settingBean.IsDouble;
+
+
             settingBean1 = settingBean;
         }
 
@@ -145,11 +150,6 @@ namespace ToolTest2.forms
         private void checkBoxSetSerialNum_CheckedChanged(object sender, EventArgs e)
         {
             settingBean1.IsSetSerialNum = checkBoxSetSerialNum.Checked;
-        }
-
-        private void checkBoxEnterDut_CheckedChanged(object sender, EventArgs e)
-        {
-            settingBean1.IsEnterDutMode = checkBoxEnterDut.Checked;
         }
 
         private void checkBoxEnterShip_CheckedChanged(object sender, EventArgs e)
@@ -223,12 +223,6 @@ namespace ToolTest2.forms
             settingBean1.PassWard = textBoxPwd.Text;
         }
 
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            settingBean1.BatteryValue = textBox1.Text;
-        }
-
         private void textBoxVersion_TextChanged(object sender, EventArgs e)
         {
             if (textBoxVersion.Text.Length > 2 && textBoxVersion.Text.Contains("."))
@@ -268,6 +262,34 @@ namespace ToolTest2.forms
 
         private void textBoxHardVersion_TextChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void comboBoxColor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settingBean1.Color = comboBoxColor.Text.ToString();
+        }
+
+        private void rbDouble_Click(object sender, EventArgs e)
+        {
+            if (rbDouble.Checked)
+            {
+                rbDouble.Checked = true;
+                settingBean1.IsDouble = true;
+            }
+        }
+
+        private void rbSingle_Click(object sender, EventArgs e)
+        {
+            if (rbSingle.Checked)
+            {
+                rbSingle.Checked = true;
+                settingBean1.IsDouble = false;
+            }
+        }
+
+        private void textBoxHardVersion_Leave(object sender, EventArgs e)
+        {
             if (textBoxHardVersion.Text.Length > 2 && textBoxHardVersion.Text.Contains("."))
             {
                 settingBean1.HardVersion = textBoxHardVersion.Text;
@@ -278,9 +300,14 @@ namespace ToolTest2.forms
             }
         }
 
-        private void comboBoxColor_SelectedIndexChanged(object sender, EventArgs e)
+        private void textBoxBatteryMin_TextChanged(object sender, EventArgs e)
         {
-            settingBean1.Color = comboBoxColor.Text.ToString();
+            settingBean1.BatteryValueMin = textBoxBatteryMin.Text;
+        }
+
+        private void textBoxBatteryMax_TextChanged(object sender, EventArgs e)
+        {
+            settingBean1.BatteryValueMax = textBoxBatteryMax.Text;
         }
     }
 }

@@ -33,6 +33,10 @@ namespace GS_1406.forms
         Boolean autoFlag = true;
         private int currentNode = -1;
         private int year, month, day, hour, minute, second;
+        private string bleAdr = "";
+        private int earCode = 0x00;
+        private bool isDouble = false;
+        private string text1 = "", text2 = "";
         public Form2()
         {
             InitializeComponent();
@@ -83,6 +87,7 @@ namespace GS_1406.forms
             this.settingsList.Add(this.settingBean.IsGetSerialNum);//获取设备SN
             this.settingsList.Add(this.settingBean.IsGetCaseSerialNum);//获取盒子SN
             this.settingsList.Add(this.settingBean.IsGetProductId);//获取产品型号
+            isDouble = this.settingBean.IsDouble;
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -110,16 +115,15 @@ namespace GS_1406.forms
         {
             try
             {
-
                 String dateString = ">DISC";
                 sp.sendCommend(dateString);
-                Status = 1;
+                saveLog(DateTime.Now + "");
+                saveLog("write  >>   " + dateString);
                 flag = 0;
                 currentNode = -1;
                 autoFlag = true;
-                mStatus = 0;
-                saveLog(DateTime.Now + "");
-                saveLog("write  >>   " + dateString);
+                mStatus = 1;
+                bleAdr = "";
             }
             catch (Exception ex)
             {
@@ -197,6 +201,7 @@ namespace GS_1406.forms
         {
             if (textBoxScanBle.Text.Length == 12)
             {
+                bleAdr = textBoxScanBle.Text;
                 clearMsg();
                 getTime();
                 saveLog(DateTime.Now + "");
@@ -352,7 +357,7 @@ namespace GS_1406.forms
             saveLog("发送消息  >>   " + FormateUtil.byteArrayToHexString(dataBytes));
         }
 
-     
+
 
         private void sendCommendGetSN()
         {
@@ -370,7 +375,7 @@ namespace GS_1406.forms
             saveLog("发送消息  >>   " + FormateUtil.byteArrayToHexString(dataBytes));
         }
 
-       
+
 
         private void sendCommendGetCaseSN()
         {
@@ -471,13 +476,13 @@ namespace GS_1406.forms
                 {
                     Directory.CreateDirectory(adr);
                 }
-                adrssPass = adr + "/" + textBoxScanBle.Text + "_" + hour + minute + second + "_log_pass.txt";
-                adrssFail = adr + "/" + textBoxScanBle.Text + "_" + hour + minute + second + "_log_fail.txt";
+                adrssPass = adr + "/" + bleAdr + "_" + (hour.ToString().Length == 2 ? hour : "0" + hour) + (minute.ToString().Length == 2 ? minute : "0" + minute) + (second.ToString().Length == 2 ? second : "0" + second) + "_log_pass.txt";
+                adrssFail = adr + "/" + bleAdr + "_" + (hour.ToString().Length == 2 ? hour : "0" + hour) + (minute.ToString().Length == 2 ? minute : "0" + minute) + (second.ToString().Length == 2 ? second : "0" + second) + "_log_fail.txt";
                 if (mStatus == 1)
                 {
                     if (!File.Exists(adrssFail))
                     {
-                        Microsoft.VisualBasic.FileIO.FileSystem.RenameFile(adrssPass, textBoxScanBle.Text + "_" + hour + minute + second + "_log_fail.txt");
+                        Microsoft.VisualBasic.FileIO.FileSystem.RenameFile(adrssPass, bleAdr + "_" + (hour.ToString().Length == 2 ? hour : "0" + hour) + (minute.ToString().Length == 2 ? minute : "0" + minute) + (second.ToString().Length == 2 ? second : "0" + second) + "_log_fail.txt");
                     }
                     streamWriter = new StreamWriter(adrssFail, true);
                     streamWriter.WriteLine(s);
@@ -510,6 +515,7 @@ namespace GS_1406.forms
             if (date.Contains("SDP_SEARCH_FAILED"))
             {
                 Status = 2;
+                mStatus = 1;
                 saveLog("连接失败");
             }
             if (date.Contains(">SPP_CONNECT"))
@@ -518,21 +524,21 @@ namespace GS_1406.forms
                 Status = 0;
                 flag = 1;
                 mStatus = 0;
-               
+
                 saveLog("连接成功");
                 sendCommendAuto();
             }
             if (date.Contains("SppDisconnectInd,spp_disconnect_abnormal_disconnect"))
             {
                 Thread.Sleep(2000);
-                Status = 1;
-                flag = 0;
-                autoFlag = true;
                 saveLog("连接断开");
+                Status = 1;
+                
             }
             if (date.Contains("a_2dp_operation_fail"))
             {
                 Status = 2;
+                mStatus = 1;
                 Thread.Sleep(1000);
                 disconnect();
             }
@@ -548,6 +554,381 @@ namespace GS_1406.forms
 
         }
 
+        public bool isSingleError(byte bytes)
+        {
+            if (earCode == 0x00)
+            {
+                earCode = bytes;
+            }
+            else if (earCode != bytes)
+            {
+                Status = 2;
+
+                saveLog("左右耳异常");
+                return false;
+            }
+            return true;
+        }
+
+        public void updataUI(int tabInt, byte[] data, bool isTwo)
+        {
+            switch (tabInt)
+            {
+                case 0x101:
+                    text1 = "";
+                    labelLColor.Invoke(delegate
+                    {
+                        labelLColor.BackColor = Color.Green;
+                        if (isTwo ? data[data.Length / 2 + 8] == 0x01 : data[8] == 0x01)
+                        {
+                            labelLColor.Text = "black";
+                        }
+                        else if (isTwo ? data[data.Length / 2 + 8] == 0x02 : data[8] == 0x02)
+                        {
+                            labelLColor.Text = "white";
+                        }
+                        else
+                        {
+                            Status = 2;
+                            labelLColor.BackColor = Color.Red;
+                        }
+                    });
+                    text1 = labelLColor.Text;
+                    break;
+                case 0x102:
+                    text2 = "";
+                    labelRColor.Invoke(delegate
+                    {
+                        labelRColor.BackColor = Color.Green;
+                        if (isTwo ? data[data.Length / 2 + 8] == 0x01 : data[8] == 0x01)
+                        {
+                            labelRColor.Text = "black";
+                        }
+                        else if (isTwo ? data[data.Length / 2 + 8] == 0x02 : data[8] == 0x02)
+                        {
+                            labelRColor.Text = "white";
+                        }
+                        else
+                        {
+                            Status = 2;
+                            labelRColor.BackColor = Color.Red;
+                        }
+                    });
+                    text2 = labelRColor.Text;
+                    break;
+                case 0x121:
+                    text1 = "";
+                    labelLHardVersion.Invoke(delegate
+                    {
+                        labelLHardVersion.BackColor = Color.Green;
+                        int a = isTwo ? data[data.Length / 2 + 8] / 16 : data[8] / 16;
+                        int b = isTwo ? data[data.Length / 2 + 8] % 16 : data[8] % 16;
+                        labelLHardVersion.Text = a + "." + b;
+
+                    });
+                    text1 = labelLHardVersion.Text;
+                    break;
+                case 0x122:
+                    text2 = "";
+                    labelRHardVersion.Invoke(delegate
+                    {
+                        labelRHardVersion.BackColor = Color.Green;
+                        int a = isTwo ? data[data.Length / 2 + 8] / 16 : data[8] / 16;
+                        int b = isTwo ? data[data.Length / 2 + 8] % 16 : data[8] % 16;
+                        labelRHardVersion.Text = a + "." + b;
+
+                    });
+                    text2 = labelRHardVersion.Text;
+                    break;
+                case 0x141:
+                    text1 = "";
+                    labelLSoftVersion.Invoke(delegate
+                    {
+                        int a = isTwo ? data[data.Length / 2 + 9] : data[9];
+                        int b = isTwo ? data[data.Length / 2 + 8] / 16 : data[8] / 16;
+                        int c = isTwo ? data[data.Length / 2 + 8] % 16 : data[8] % 16;
+                        labelLSoftVersion.Text = a + "." + b + "." + c;
+                        labelLSoftVersion.BackColor = Color.Green;
+                        if (!labelLSoftVersion.Text.Equals(settingBean.SoftVersion))
+                        {
+                            labelLSoftVersion.BackColor = Color.Red;
+                            //MessageBox.Show("软件版本异常");
+                            Status = 2;
+                        }
+                    });
+                    text1 = labelLSoftVersion.Text;
+                    break;
+                case 0x142:
+                    text2 = "";
+                    labelRSoftVersion.Invoke(delegate
+                    {
+                        int a = isTwo ? data[data.Length / 2 + 9] : data[9];
+                        int b = isTwo ? data[data.Length / 2 + 8] / 16 : data[8] / 16;
+                        int c = isTwo ? data[data.Length / 2 + 8] % 16 : data[8] % 16;
+                        labelRSoftVersion.Text = a + "." + b + "." + c;
+                        labelRSoftVersion.BackColor = Color.Green;
+                        if (!labelRSoftVersion.Text.Equals(settingBean.SoftVersion))
+                        {
+                            labelRSoftVersion.BackColor = Color.Red;
+                            //MessageBox.Show("软件版本异常");
+                            Status = 2;
+                        }
+                    });
+                    text2 = labelRSoftVersion.Text;
+                    break;
+                case 0x151:
+                    text1 = "";
+                    labelLBattery.Invoke(delegate
+                    {
+                        int battey = isTwo ? data[data.Length / 2 + 8] : data[8];
+                        labelLBattery.Text = battey.ToString();
+                        if(battey < int.Parse(settingBean.BatteryValueMin) || battey > int.Parse(settingBean.BatteryValueMax))
+                        {
+                            Status = 2;
+                            labelLBattery.BackColor = Color.Red;
+                        }
+                        else
+                        {
+                            labelLBattery.BackColor = Color.Green;
+                        }
+                    });
+                    text1 = labelLBattery.Text;
+                    break;
+                case 0x152:
+                    text2 = "";
+                    labelRBattery.Invoke(delegate
+                    {
+                        int battey = isTwo ? data[data.Length / 2 + 8] : data[8];
+                        labelRBattery.Text = battey.ToString();
+                        if (battey < int.Parse(settingBean.BatteryValueMin) || battey > int.Parse(settingBean.BatteryValueMax))
+                        {
+                            Status = 2;
+                            labelRBattery.BackColor = Color.Red;
+                        }
+                        else
+                        {
+                            labelRBattery.BackColor = Color.Green;
+                        }
+                    });
+                    text2 = labelRBattery.Text;
+                    break;
+                case 0x161:
+                    text1 = "";
+                    labelLMFI.Invoke(delegate
+                    {
+                        if (isTwo ? data[data.Length / 2 + 8] == 0x00 : data[8] == 0x00)
+                        {
+                            labelLMFI.Text = "Pass";
+                            labelLMFI.BackColor = Color.Green;
+                        }
+                        else
+                        {
+                            Status = 2;
+                            labelLMFI.Text = "Fail";
+                            labelLMFI.BackColor = Color.Red;
+                        }
+                    });
+                    text1 = labelLMFI.Text;
+                    break;
+                case 0x162:
+                    text2 = "";
+                    labelRMFI.Invoke(delegate
+                    {
+                        if (isTwo ? data[data.Length / 2 + 8] == 0x00 : data[8] == 0x00)
+                        {
+                            labelRMFI.Text = "Pass";
+                            labelRMFI.BackColor = Color.Green;
+                        }
+                        else
+                        {
+                            Status = 2;
+                            labelRMFI.Text = "Fail";
+                            labelRMFI.BackColor = Color.Red;
+                        }
+                    });
+                    text2 = labelRMFI.Text;
+                    break;
+                case 0x171:
+                    text1 = "";
+                    labelLSN.Invoke(delegate
+                    {
+                        int len = 14;
+                        byte[] b = new byte[len];
+                        string s = "";
+                        for (int i = 0; i < len; i++)
+                        {
+                            b[i] = isTwo ? data[data.Length / 2 + i + 8] : data[i + 8];
+                        }
+                        for (int i = 0; i < len; i++)
+                        {
+                            ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
+                            char[] ascii = aSCIIEncoding.GetChars(b);
+                            s += ascii[i];
+                        }
+                        labelLSN.Text = s;
+                        labelLSN.BackColor = Color.Green;
+                    });
+                    text1 = labelLSN.Text;
+                    break;
+                case 0x172:
+                    text2 = "";
+                    labelRSN.Invoke(delegate
+                    {
+                        int len = 14;
+                        byte[] b = new byte[len];
+                        string s = "";
+                        for (int i = 0; i < len; i++)
+                        {
+                            b[i] = isTwo ? data[data.Length / 2 + i + 8] : data[i + 8];
+                        }
+                        for (int i = 0; i < len; i++)
+                        {
+                            ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
+                            char[] ascii = aSCIIEncoding.GetChars(b);
+                            s += ascii[i];
+                        }
+                        labelRSN.Text = s;
+                        labelRSN.BackColor = Color.Green;
+                    });
+                    text2 = labelRSN.Text;
+                    break;
+                case 0x1A1:
+                    text1 = "";
+                    labelLProduct.Invoke(delegate
+                    {
+                        int len = 10;
+                        byte[] b = new byte[len];
+                        string s = "";
+                        for (int i = 0; i < len; i++)
+                        {
+                            b[i] = isTwo ? data[data.Length / 2 + i + 8] : data[i + 8];
+                        }
+                        for (int i = 0; i < len; i++)
+                        {
+                            ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
+                            char[] ascii = aSCIIEncoding.GetChars(b);
+                            s += ascii[i];
+                        }
+                        labelLProduct.Text = s;
+                        labelLProduct.BackColor = Color.Green;
+                    });
+                    text1 = labelLProduct.Text;
+                    break;
+                case 0x1A2:
+                    text2 = "";
+                    labelRProduct.Invoke(delegate
+                    {
+                        int len = 10;
+                        byte[] b = new byte[len];
+                        string s = "";
+                        for (int i = 0; i < len; i++)
+                        {
+                            b[i] = isTwo ? data[data.Length / 2 + i + 8] : data[i + 8];
+                        }
+                        for (int i = 0; i < len; i++)
+                        {
+                            ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
+                            char[] ascii = aSCIIEncoding.GetChars(b);
+                            s += ascii[i];
+                        }
+                        labelRProduct.Text = s;
+                        labelRProduct.BackColor = Color.Green;
+                    });
+                    text2 = labelRProduct.Text;
+                    break;
+                case 0x1C1:
+                    text1 = "";
+                    labelLCaseSN.Invoke(delegate
+                    {
+                        int len = 15;
+                        byte[] b = new byte[len];
+                        string s = "";
+                        for (int i = 0; i < len; i++)
+                        {
+                            b[i] = isTwo ? data[data.Length / 2 + i + 8] : data[i + 8];
+                        }
+                        for (int i = 0; i < len; i++)
+                        {
+                            ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
+                            char[] ascii = aSCIIEncoding.GetChars(b);
+                            s += ascii[i];
+                        }
+                        labelLCaseSN.Text = s;
+                        labelLCaseSN.BackColor = Color.Green;
+                    });
+                    text1 = labelLCaseSN.Text;
+                    break;
+                case 0x1C2:
+                    text2 = "";
+                    labelRCaseSN.Invoke(delegate
+                    {
+                        int len = 15;
+                        byte[] b = new byte[len];
+                        string s = "";
+                        for (int i = 0; i < len; i++)
+                        {
+                            b[i] = isTwo ? data[data.Length / 2 + i + 8] : data[i + 8];
+                        }
+                        for (int i = 0; i < len; i++)
+                        {
+                            ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
+                            char[] ascii = aSCIIEncoding.GetChars(b);
+                            s += ascii[i];
+                        }
+                        labelRCaseSN.Text = s;
+                        labelRCaseSN.BackColor = Color.Green;
+                    });
+                    text2 = labelRCaseSN.Text;
+                    break;
+            }
+
+        }
+
+        public void receiveDataCommend(byte[] data, int value1, int value2, string msg1, string msg2)
+        {
+            if (!isDouble && !checkDouble(data))
+            {
+                if (!isSingleError(data[7]))
+                {
+                    MessageBox.Show("左右耳异常");
+                    return;
+                }
+                if (data[7] == 0x01)
+                {
+                    updataUI(value1, data, false);
+                    saveLog(msg1 + (text1.Equals("") ? "获取失败" : text1));
+                }
+                else
+                {
+                    updataUI(value2, data, false);
+                    saveLog(msg2 + (text2.Equals("") ? "获取失败" : text2));
+                }
+            }
+            else if (isDouble && checkDouble(data))
+            {
+                if (data[7] == 0x01)
+                {
+                    updataUI(value1, data, false);
+                    updataUI(value2, data, true);
+                }
+                else
+                {
+                    updataUI(value1, data, true);
+                    updataUI(value2, data, false);
+                }
+                saveLog(msg1 + (text1.Equals("") ? "获取失败" : text1));
+                saveLog(msg2 + (text2.Equals("") ? "获取失败" : text2));
+            }
+            else
+            {
+                Status = 2;
+                MessageBox.Show("单双耳异常");
+                saveLog("单双耳异常");
+            }
+            if (Status == 0)
+                checkCommendAuto();
+        }
+
         public void dataReceive(byte[] data)
         {
             BlueToothReceivedData += DateTime.Now + "\r\n";
@@ -559,752 +940,46 @@ namespace GS_1406.forms
             {
                 BlueToothReceivedData += String.Format("date[" + i + "] = " + data[i] + "\r\n");
             }
-            if (data[0] == 0x05 && data[1] == 0x5B || data[0] == 0x05 && data[1] == 0x5B)
+            if (data[0] == 0x05 && data[1] == 0x5B)
             {
                 Status = 0;
                 switch (data[4])
                 {
                     case 0x10:
-                        if (data[7] == 0x01)
-                        {
-                            labelLColor.Invoke(delegate
-                            {
-                                labelLColor.BackColor = Color.Green;
-                                if (data[8] == 0x01)
-                                {
-                                    labelLColor.Text = "black";
-                                }
-                                else if (data[8] == 0x02)
-                                {
-                                    labelLColor.Text = "white";
-                                }
-                            });
-                            if (checkDouble(data))
-                            {
-                                labelRColor.Invoke(delegate
-                                {
-                                    labelRColor.BackColor = Color.Green;
-                                    if (data[data.Length / 2 + 8] == 0x01)
-                                    {
-                                        labelRColor.Text = "black";
-                                    }
-                                    else if (data[data.Length / 2 + 8] == 0x02)
-                                    {
-                                        labelRColor.Text = "white";
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                labelRColor.Invoke(delegate
-                                {
-                                    labelRColor.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        }
-                        else if (data[7] == 0x02)
-                        {
-                            labelRColor.Invoke(delegate
-                            {
-                                labelRColor.BackColor = Color.Green;
-                                if (data[8] == 0x01)
-                                {
-                                    labelRColor.Text = "black";
-                                }
-                                else if (data[8] == 0x02)
-                                {
-                                    labelRColor.Text = "white";
-                                }
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelLColor.Invoke(delegate
-                                {
-                                    labelLColor.BackColor = Color.Green;
-                                    if (data[data.Length / 2 + 8] == 0x01)
-                                    {
-                                        labelLColor.Text = "black";
-                                    }
-                                    else if (data[data.Length / 2 + 8] == 0x02)
-                                    {
-                                        labelLColor.Text = "white";
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                labelLColor.Invoke(delegate
-                                {
-                                    labelLColor.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        };
-                        saveLog("左耳颜色" + (labelLColor.Text.Equals("") ? "获取失败" : labelLColor.Text));
-                        saveLog("右耳颜色" + (labelRColor.Text.Equals("") ? "获取失败" : labelRColor.Text));
-                        checkCommendAuto();
+                        receiveDataCommend(data, 0x101, 0x102, "左耳颜色", "右耳颜色");
                         break;
                     case 0x11:
                         sendCommendGetColor();
                         break;
                     case 0x12:
-                        if (data[7] == 0x01)
-                        {
-                            labelLHardVersion.Invoke(delegate
-                            {
-                                labelLHardVersion.BackColor = Color.Green;
-                                int a = data[8] / 16;
-                                int b = data[8] % 16;
-                                labelLHardVersion.Text = a + "." + b;
-
-                            });
-                            if (checkDouble(data))
-                            {
-                                labelRHardVersion.Invoke(delegate
-                                {
-                                    labelRHardVersion.BackColor = Color.Green;
-                                    int a = data[data.Length / 2 + 8] / 16;
-                                    int b = data[data.Length / 2 + 8] % 16;
-                                    labelRHardVersion.Text = a + "." + b;
-                                });
-                            }
-                            else
-                            {
-                                labelRHardVersion.Invoke(delegate
-                                {
-                                    labelRHardVersion.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        }
-                        else if (data[7] == 0x02)
-                        {
-                            labelRHardVersion.Invoke(delegate
-                            {
-                                labelRHardVersion.BackColor = Color.Green;
-                                int a = data[8] / 16;
-                                int b = data[8] % 16;
-                                labelRHardVersion.Text = a + "." + b;
-                            });
-                            if (checkDouble(data))
-                            {
-                                labelLHardVersion.Invoke(delegate
-                                {
-                                    labelLHardVersion.BackColor = Color.Green;
-                                    int a = data[data.Length / 2 + 8] / 16;
-                                    int b = data[data.Length / 2 + 8] % 16;
-                                    labelLHardVersion.Text = a + "." + b;
-                                });
-                            }
-                            else
-                            {
-                                labelLHardVersion.Invoke(delegate
-                                {
-                                    labelLHardVersion.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        };
-                        saveLog("左耳硬件版本" + (labelLHardVersion.Text.Equals("") ? "获取失败" : labelLHardVersion.Text));
-                        saveLog("右耳硬件版本" + (labelRHardVersion.Text.Equals("") ? "获取失败" : labelRHardVersion.Text));
-                        checkCommendAuto();
-
+                        receiveDataCommend(data, 0x121, 0x122, "左耳硬件版本", "右耳硬件版本");
                         break;
                     case 0x13:
                         sendCommendGetHardVersion();
                         break;
                     case 0x14:
-                        if (data[7] == 0x01)
-                        {
-                            labelLSoftVersion.Invoke(delegate
-                            {
-                                int a = data[9];
-                                int b = data[8] / 16;
-                                int c = data[8] % 16;
-                                labelLSoftVersion.Text = a + "." + b + "." + c;
-                                labelLSoftVersion.BackColor = Color.Green;
-                                if (!labelLSoftVersion.Text.Equals(settingBean.SoftVersion))
-                                {
-                                    labelLSoftVersion.BackColor = Color.Red;
-                                    //MessageBox.Show("软件版本异常");
-                                    Status = 2;
-                                }
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelRSoftVersion.Invoke(delegate
-                                {
-                                    int a = data[data.Length / 2 + 9];
-                                    int b = data[data.Length / 2 + 8] / 16;
-                                    int c = data[data.Length / 2 + 8] % 16;
-                                    labelRSoftVersion.Text = a + "." + b + "." + c;
-                                    labelRSoftVersion.BackColor = Color.Green;
-                                    if (!labelRSoftVersion.Text.Equals(settingBean.SoftVersion))
-                                    {
-                                        labelRSoftVersion.BackColor = Color.Red;
-                                        //MessageBox.Show("软件版本异常");
-                                        Status = 2;
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                labelRSoftVersion.Invoke(delegate
-                                {
-                                    labelRSoftVersion.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        }
-                        else if (data[7] == 0x02)
-                        {
-                            labelRSoftVersion.Invoke(delegate
-                            {
-                                int a = data[9];
-                                int b = data[8] / 16;
-                                int c = data[8] % 16;
-                                labelRSoftVersion.Text = a + "." + b + "." + c;
-                                labelRSoftVersion.BackColor = Color.Green;
-                                if (!labelRSoftVersion.Text.Equals(settingBean.SoftVersion))
-                                {
-                                    labelRSoftVersion.BackColor = Color.Red;
-                                    //MessageBox.Show("软件版本异常");
-                                    Status = 2;
-                                }
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelLSoftVersion.Invoke(delegate
-                                {
-                                    int a = data[data.Length / 2 + 9];
-                                    int b = data[data.Length / 2 + 8] / 16;
-                                    int c = data[data.Length / 2 + 8] % 16;
-                                    labelLSoftVersion.Text = a + "." + b + "." + c;
-                                    labelLSoftVersion.BackColor = Color.Green;
-                                    if (!labelLSoftVersion.Text.Equals(settingBean.SoftVersion))
-                                    {
-                                        labelLSoftVersion.BackColor = Color.Red;
-                                        //MessageBox.Show("软件版本异常");
-                                        Status = 2;
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                labelLSoftVersion.Invoke(delegate
-                                {
-                                    labelLSoftVersion.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        };
-                        saveLog("左耳软件版本" + (labelLSoftVersion.Text.Equals("") ? "获取失败" : labelLSoftVersion.Text));
-                        saveLog("右耳软件版本" + (labelRSoftVersion.Text.Equals("") ? "获取失败" : labelRSoftVersion.Text));
-                        checkCommendAuto();
+                        receiveDataCommend(data, 0x141, 0x142, "左耳软件版本", "右耳软件版本");
                         break;
                     case 0x15:
-                        if (data[7] == 0x01)
-                        {
-                            labelLBattery.Invoke(delegate
-                            {
-                                labelLBattery.Text = data[8].ToString();
-                                if (data[8] < int.Parse(settingBean.BatteryValue))
-                                {
-                                    labelLBattery.BackColor = Color.Red;
-                                }
-                                else
-                                {
-                                    labelLBattery.BackColor = Color.Green;
-                                }
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelRBattery.Invoke(delegate
-                                {
-                                    labelRBattery.Text = data[data.Length / 2 + 8].ToString();
-                                    if (data[data.Length / 2 + 8] < int.Parse(settingBean.BatteryValue))
-                                    {
-                                        labelRBattery.BackColor = Color.Red;
-                                    }
-                                    else
-                                    {
-                                        labelRBattery.BackColor = Color.Green;
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                labelRBattery.Invoke(delegate
-                                {
-                                    labelRBattery.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        }
-                        else if (data[7] == 0x02)
-                        {
-                            labelRBattery.Invoke(delegate
-                            {
-                                labelRBattery.Text = data[8].ToString();
-                                if (data[8] < int.Parse(settingBean.BatteryValue))
-                                {
-                                    labelRBattery.BackColor = Color.Red;
-                                }
-                                else
-                                {
-                                    labelRBattery.BackColor = Color.Green;
-                                }
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelLBattery.Invoke(delegate
-                                {
-                                    labelLBattery.Text = data[data.Length / 2 + 8].ToString();
-                                    if (data[data.Length / 2 + 8] < int.Parse(settingBean.BatteryValue))
-                                    {
-                                        labelLBattery.BackColor = Color.Red;
-                                    }
-                                    else
-                                    {
-                                        labelLBattery.BackColor = Color.Green;
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                labelLBattery.Invoke(delegate
-                                {
-                                    labelLBattery.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        };
-                        saveLog("左耳电量" + (labelLBattery.Text.Equals("") ? "获取失败" : labelLBattery.Text));
-                        saveLog("右耳电量" + (labelRBattery.Text.Equals("") ? "获取失败" : labelRBattery.Text));
-                        checkCommendAuto();
+                        receiveDataCommend(data, 0x151, 0x152, "左耳电量", "右耳电量");
                         break;
                     case 0x16:
-                        if (data[7] == 0x01)
-                        {
-                            labelLMFI.Invoke(delegate
-                            {
-                                if (data[8] == 0x00)
-                                {
-                                    labelLMFI.Text = "Pass";
-                                    labelLMFI.BackColor = Color.Green;
-                                }
-                                else
-                                {
-                                    labelLMFI.Text = "Fail";
-                                    labelLMFI.BackColor = Color.Red;
-                                }
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelRMFI.Invoke(delegate
-                                {
-                                    if (data[data.Length / 2 + 8] == 0x00)
-                                    {
-                                        labelRMFI.Text = "Pass";
-                                        labelRMFI.BackColor = Color.Green;
-                                    }
-                                    else
-                                    {
-                                        labelRMFI.Text = "Fail";
-                                        labelRMFI.BackColor = Color.Red;
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                labelRMFI.Invoke(delegate
-                                {
-                                    labelRMFI.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        }
-                        else if (data[7] == 0x02)
-                        {
-                            labelRMFI.Invoke(delegate
-                            {
-                                if (data[8] == 0x00)
-                                {
-                                    labelRMFI.Text = "Pass";
-                                    labelRMFI.BackColor = Color.Green;
-                                }
-                                else
-                                {
-                                    labelRMFI.Text = "Fail";
-                                    labelRMFI.BackColor = Color.Red;
-                                }
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelLMFI.Invoke(delegate
-                                {
-                                    if (data[data.Length / 2 + 8] == 0x00)
-                                    {
-                                        labelLMFI.Text = "Pass";
-                                        labelLMFI.BackColor = Color.Green;
-                                    }
-                                    else
-                                    {
-                                        labelLMFI.Text = "Fail";
-                                        labelLMFI.BackColor = Color.Red;
-                                    }
-                                });
-                            }
-                            else
-                            {
-                                labelLMFI.Invoke(delegate
-                                {
-                                    labelLMFI.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        };
-                        saveLog("左耳MFI" + (labelLMFI.Text.Equals("") ? "获取失败" : labelLMFI.Text));
-                        saveLog("右耳MFI" + (labelRMFI.Text.Equals("") ? "获取失败" : labelRMFI.Text));
-                        checkCommendAuto();
+                        receiveDataCommend(data, 0x161, 0x162, "左耳MFI Chip check", "右耳MFI Chip check");
                         break;
                     case 0x17:
-                        if (data[7] == 0x01)
-                        {
-                            labelLSN.Invoke(delegate
-                            {
-                                int len = 14;
-                                byte[] b = new byte[len];
-                                string s = "";
-                                for (int i = 0; i < len; i++)
-                                {
-                                    b[i] = data[i + 8];
-                                }
-                                for (int i = 0; i < len; i++)
-                                {
-                                    ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                    char[] ascii = aSCIIEncoding.GetChars(b);
-                                    s += ascii[i];
-                                }
-                                labelLSN.Text = s;
-                                labelLSN.BackColor = Color.Green;
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelRSN.Invoke(delegate
-                                {
-                                    int len = 14;
-                                    byte[] b = new byte[len];
-                                    string s = "";
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        b[i] = data[i + data.Length / 2 + 8];
-                                    }
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                        char[] ascii = aSCIIEncoding.GetChars(b);
-                                        s += ascii[i];
-                                    }
-                                    labelRSN.Text = s;
-                                    labelRSN.BackColor = Color.Green;
-                                });
-                            }
-                            else
-                            {
-                                labelRSN.Invoke(delegate
-                                {
-                                    labelRSN.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        }
-                        else if (data[7] == 0x02)
-                        {
-                            labelRSN.Invoke(delegate
-                            {
-                                int len = 14;
-                                byte[] b = new byte[len];
-                                string s = "";
-                                for (int i = 0; i < len; i++)
-                                {
-                                    b[i] = data[i + 8];
-                                }
-                                for (int i = 0; i < len; i++)
-                                {
-                                    ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                    char[] ascii = aSCIIEncoding.GetChars(b);
-                                    s += ascii[i];
-                                }
-                                labelRSN.Text = s;
-                                labelRSN.BackColor = Color.Green;
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelLSN.Invoke(delegate
-                                {
-                                    int len = 14;
-                                    byte[] b = new byte[len];
-                                    string s = "";
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        b[i] = data[i + data.Length / 2 + 8];
-                                    }
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                        char[] ascii = aSCIIEncoding.GetChars(b);
-                                        s += ascii[i];
-                                    }
-                                    labelLSN.Text = s;
-                                    labelLSN.BackColor = Color.Green;
-                                });
-
-                            }
-                            else
-                            {
-                                labelLSN.Invoke(delegate
-                                {
-                                    labelLSN.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        };
-                        saveLog("左耳SN" + (labelLSN.Text.Equals("") ? "获取失败" : labelLSN.Text));
-                        saveLog("右耳SN" + (labelRSN.Text.Equals("") ? "获取失败" : labelRSN.Text));
-                        checkCommendAuto();
-
+                        receiveDataCommend(data, 0x171, 0x172, "左耳SN", "右耳SN");
                         break;
                     case 0x18:
                         sendCommendGetSN();
                         break;
                     case 0x1A:
-                        if (data[7] == 0x01)
-                        {
-                            labelLProduct.Invoke(delegate
-                            {
-                                int len = 10;
-                                byte[] b = new byte[len];
-                                string s = "";
-                                for (int i = 0; i < len; i++)
-                                {
-                                    b[i] = data[i + 8];
-                                }
-                                for (int i = 0; i < len; i++)
-                                {
-                                    ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                    char[] ascii = aSCIIEncoding.GetChars(b);
-                                    s += ascii[i];
-                                }
-                                labelLProduct.Text = s;
-                                labelLProduct.BackColor = Color.Green;
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelRProduct.Invoke(delegate
-                                {
-                                    int len = 10;
-                                    byte[] b = new byte[len];
-                                    string s = "";
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        b[i] = data[i + data.Length / 2 + 8];
-                                    }
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                        char[] ascii = aSCIIEncoding.GetChars(b);
-                                        s += ascii[i];
-                                    }
-                                    labelRProduct.Text = s;
-                                    labelRProduct.BackColor = Color.Green;
-                                });
-                            }
-                            else
-                            {
-                                labelRProduct.Invoke(delegate
-                                {
-                                    labelRProduct.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        }
-                        else if (data[7] == 0x02)
-                        {
-                            labelRProduct.Invoke(delegate
-                            {
-                                int len = 10;
-                                byte[] b = new byte[len];
-                                string s = "";
-                                for (int i = 0; i < len; i++)
-                                {
-                                    b[i] = data[i + 8];
-                                }
-                                for (int i = 0; i < len; i++)
-                                {
-                                    ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                    char[] ascii = aSCIIEncoding.GetChars(b);
-                                    s += ascii[i];
-                                }
-                                labelRProduct.Text = s;
-                                labelRProduct.BackColor = Color.Green;
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelLProduct.Invoke(delegate
-                                {
-                                    int len = 10;
-                                    byte[] b = new byte[len];
-                                    string s = "";
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        b[i] = data[i + data.Length / 2 + 8];
-                                    }
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                        char[] ascii = aSCIIEncoding.GetChars(b);
-                                        s += ascii[i];
-                                    }
-                                    labelLProduct.Text = s;
-                                    labelLProduct.BackColor = Color.Green;
-                                });
-                            }
-                            else
-                            {
-                                labelLProduct.Invoke(delegate
-                                {
-                                    labelLProduct.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        };
-                        saveLog("左耳产品型号" + (labelLProduct.Text.Equals("") ? "获取失败" : labelLProduct.Text));
-                        saveLog("右耳产品型号" + (labelRProduct.Text.Equals("") ? "获取失败" : labelRProduct.Text));
-                        checkCommendAuto();
-
+                        receiveDataCommend(data, 0x1A1, 0x1A2, "左耳产品型号", "右耳产品型号");
                         break;
                     case 0x1B:
                         sendCommendGetSKU();
                         break;
                     case 0x1C:
-                        if (data[7] == 0x01)
-                        {
-                            labelLCaseSN.Invoke(delegate
-                            {
-                                int len = 15;
-                                byte[] b = new byte[len];
-                                string s = "";
-                                for (int i = 0; i < len; i++)
-                                {
-                                    b[i] = data[i + 8];
-                                }
-                                for (int i = 0; i < len; i++)
-                                {
-                                    ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                    char[] ascii = aSCIIEncoding.GetChars(b);
-                                    s += ascii[i];
-                                }
-                                labelLCaseSN.Text = s;
-                                labelLCaseSN.BackColor = Color.Green;
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelRCaseSN.Invoke(delegate
-                                {
-                                    int len = 15;
-                                    byte[] b = new byte[len];
-                                    string s = "";
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        b[i] = data[i + data.Length / 2 + 8];
-                                    }
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                        char[] ascii = aSCIIEncoding.GetChars(b);
-                                        s += ascii[i];
-                                    }
-                                    labelRCaseSN.Text = s;
-                                    labelRCaseSN.BackColor = Color.Green;
-                                });
-                            }
-                            else
-                            {
-                                labelRCaseSN.Invoke(delegate
-                                {
-                                    labelRCaseSN.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        }
-                        else if (data[7] == 0x02)
-                        {
-                            labelRCaseSN.Invoke(delegate
-                            {
-                                int len = 15;
-                                byte[] b = new byte[len];
-                                string s = "";
-                                for (int i = 0; i < len; i++)
-                                {
-                                    b[i] = data[i + 8];
-                                }
-                                for (int i = 0; i < len; i++)
-                                {
-                                    ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                    char[] ascii = aSCIIEncoding.GetChars(b);
-                                    s += ascii[i];
-                                }
-                                labelRCaseSN.Text = s;
-                                labelRCaseSN.BackColor = Color.Green;
-                            });
-
-                            if (checkDouble(data))
-                            {
-                                labelLCaseSN.Invoke(delegate
-                                {
-                                    int len = 15;
-                                    byte[] b = new byte[len];
-                                    string s = "";
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        b[i] = data[i + data.Length / 2 + 8];
-                                    }
-                                    for (int i = 0; i < len; i++)
-                                    {
-                                        ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
-                                        char[] ascii = aSCIIEncoding.GetChars(b);
-                                        s += ascii[i];
-                                    }
-                                    labelLCaseSN.Text = s;
-                                    labelLCaseSN.BackColor = Color.Green;
-                                });
-                            }
-                            else
-                            {
-                                labelLCaseSN.Invoke(delegate
-                                {
-                                    labelLCaseSN.BackColor = Color.Red;
-                                    Status = 2;
-                                });
-                            }
-                        };
-                        saveLog("左耳充电盒SN" + (labelLCaseSN.Text.Equals("") ? "获取失败" : labelLCaseSN.Text));
-                        saveLog("右耳充电盒SN" + (labelRCaseSN.Text.Equals("") ? "获取失败" : labelRCaseSN.Text));
-                        checkCommendAuto();
+                        receiveDataCommend(data, 0x1C1, 0x1C2, "左耳充电盒SN", "右耳充电盒SN");
                         break;
                     case 0x1D:
                         sendCommendGetCaseSN();
@@ -1352,7 +1027,6 @@ namespace GS_1406.forms
                     break;
             }
             mStatus = 1;
-            checkCommendAuto();
         }
 
         private void timer1_Tick(object sender, EventArgs e)

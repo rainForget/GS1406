@@ -41,16 +41,26 @@
             设置ToolStripMenuItem1 = new ToolStripMenuItem();
             panel1 = new Panel();
             textBoxColor = new TextBox();
+            textBoxProductId = new TextBox();
             textBoxScanCaseSN = new TextBox();
             labelScanCaseSN = new Label();
             buttonResetMode = new Button();
             buttonEnterShipMode = new Button();
+            labelProductId = new Label();
             textBoxHardVersion = new TextBox();
             buttonSetHardVersion = new Button();
             buttonSetDeviceColor = new Button();
-            textBoxProductId = new TextBox();
-            labelProductId = new Label();
             panel2 = new Panel();
+            labelRReset = new Label();
+            label20 = new Label();
+            labelLReset = new Label();
+            label24 = new Label();
+            labelRShip = new Label();
+            label12 = new Label();
+            labelLShip = new Label();
+            label16 = new Label();
+            labelRCaseSN = new Label();
+            label10 = new Label();
             labelLProduct = new Label();
             label8 = new Label();
             labelRProduct = new Label();
@@ -83,8 +93,6 @@
             label4 = new Label();
             timer1 = new System.Windows.Forms.Timer(components);
             panel3 = new Panel();
-            labelRCaseSN = new Label();
-            label10 = new Label();
             menuStrip1.SuspendLayout();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
@@ -93,6 +101,7 @@
             // 
             // textBoxScanSN
             // 
+            textBoxScanSN.CharacterCasing = CharacterCasing.Upper;
             textBoxScanSN.Location = new Point(179, 74);
             textBoxScanSN.MaxLength = 14;
             textBoxScanSN.Name = "textBoxScanSN";
@@ -207,9 +216,9 @@
             panel1.Controls.Add(labelScanBle);
             panel1.Controls.Add(buttonSetDeviceColor);
             panel1.Controls.Add(button1);
-            panel1.Location = new Point(12, 63);
+            panel1.Location = new Point(13, 3);
             panel1.Name = "panel1";
-            panel1.Size = new Size(732, 259);
+            panel1.Size = new Size(729, 259);
             panel1.TabIndex = 41;
             // 
             // textBoxColor
@@ -221,8 +230,17 @@
             textBoxColor.Size = new Size(121, 28);
             textBoxColor.TabIndex = 75;
             // 
+            // textBoxProductId
+            // 
+            textBoxProductId.Location = new Point(179, 131);
+            textBoxProductId.Name = "textBoxProductId";
+            textBoxProductId.ReadOnly = true;
+            textBoxProductId.Size = new Size(196, 23);
+            textBoxProductId.TabIndex = 40;
+            // 
             // textBoxScanCaseSN
             // 
+            textBoxScanCaseSN.CharacterCasing = CharacterCasing.Upper;
             textBoxScanCaseSN.Location = new Point(178, 103);
             textBoxScanCaseSN.MaxLength = 15;
             textBoxScanCaseSN.Name = "textBoxScanCaseSN";
@@ -262,6 +280,17 @@
             buttonEnterShipMode.UseVisualStyleBackColor = true;
             buttonEnterShipMode.Click += buttonEnterShipMode_Click;
             // 
+            // labelProductId
+            // 
+            labelProductId.BackColor = SystemColors.ActiveCaption;
+            labelProductId.ForeColor = Color.Black;
+            labelProductId.Location = new Point(36, 131);
+            labelProductId.Name = "labelProductId";
+            labelProductId.Size = new Size(100, 23);
+            labelProductId.TabIndex = 36;
+            labelProductId.Text = "产品型号";
+            labelProductId.TextAlign = ContentAlignment.MiddleRight;
+            // 
             // textBoxHardVersion
             // 
             textBoxHardVersion.Enabled = false;
@@ -291,28 +320,17 @@
             buttonSetDeviceColor.UseVisualStyleBackColor = true;
             buttonSetDeviceColor.Click += buttonSetDeviceColor_Click;
             // 
-            // textBoxProductId
-            // 
-            textBoxProductId.Location = new Point(179, 131);
-            textBoxProductId.Name = "textBoxProductId";
-            textBoxProductId.ReadOnly = true;
-            textBoxProductId.Size = new Size(196, 23);
-            textBoxProductId.TabIndex = 40;
-            // 
-            // labelProductId
-            // 
-            labelProductId.BackColor = SystemColors.ActiveCaption;
-            labelProductId.ForeColor = Color.Black;
-            labelProductId.Location = new Point(36, 131);
-            labelProductId.Name = "labelProductId";
-            labelProductId.Size = new Size(100, 23);
-            labelProductId.TabIndex = 36;
-            labelProductId.Text = "产品型号";
-            labelProductId.TextAlign = ContentAlignment.MiddleRight;
-            // 
             // panel2
             // 
             panel2.BackColor = SystemColors.ActiveCaption;
+            panel2.Controls.Add(labelRReset);
+            panel2.Controls.Add(label20);
+            panel2.Controls.Add(labelLReset);
+            panel2.Controls.Add(label24);
+            panel2.Controls.Add(labelRShip);
+            panel2.Controls.Add(label12);
+            panel2.Controls.Add(labelLShip);
+            panel2.Controls.Add(label16);
             panel2.Controls.Add(labelRCaseSN);
             panel2.Controls.Add(label10);
             panel2.Controls.Add(labelLProduct);
@@ -345,10 +363,100 @@
             panel2.Controls.Add(label3);
             panel2.Controls.Add(labelLColor);
             panel2.Controls.Add(label4);
-            panel2.Location = new Point(32, 274);
+            panel2.Location = new Point(13, 268);
             panel2.Name = "panel2";
-            panel2.Size = new Size(732, 328);
+            panel2.Size = new Size(732, 501);
             panel2.TabIndex = 42;
+            // 
+            // labelRReset
+            // 
+            labelRReset.BackColor = Color.White;
+            labelRReset.Location = new Point(516, 325);
+            labelRReset.Name = "labelRReset";
+            labelRReset.Size = new Size(131, 23);
+            labelRReset.TabIndex = 39;
+            labelRReset.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label20
+            // 
+            label20.Location = new Point(373, 325);
+            label20.Name = "label20";
+            label20.Size = new Size(100, 23);
+            label20.TabIndex = 38;
+            label20.Text = "右耳Reset";
+            label20.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // labelLReset
+            // 
+            labelLReset.BackColor = Color.White;
+            labelLReset.Location = new Point(179, 325);
+            labelLReset.Name = "labelLReset";
+            labelLReset.Size = new Size(131, 23);
+            labelLReset.TabIndex = 37;
+            labelLReset.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label24
+            // 
+            label24.Location = new Point(36, 325);
+            label24.Name = "label24";
+            label24.Size = new Size(100, 23);
+            label24.TabIndex = 36;
+            label24.Text = "左耳Reset";
+            label24.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // labelRShip
+            // 
+            labelRShip.BackColor = Color.White;
+            labelRShip.Location = new Point(516, 359);
+            labelRShip.Name = "labelRShip";
+            labelRShip.Size = new Size(131, 23);
+            labelRShip.TabIndex = 35;
+            labelRShip.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label12
+            // 
+            label12.Location = new Point(373, 359);
+            label12.Name = "label12";
+            label12.Size = new Size(100, 23);
+            label12.TabIndex = 34;
+            label12.Text = "右耳Ship";
+            label12.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // labelLShip
+            // 
+            labelLShip.BackColor = Color.White;
+            labelLShip.Location = new Point(179, 359);
+            labelLShip.Name = "labelLShip";
+            labelLShip.Size = new Size(131, 23);
+            labelLShip.TabIndex = 33;
+            labelLShip.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label16
+            // 
+            label16.Location = new Point(36, 359);
+            label16.Name = "label16";
+            label16.Size = new Size(100, 23);
+            label16.TabIndex = 32;
+            label16.Text = "左耳Ship";
+            label16.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // labelRCaseSN
+            // 
+            labelRCaseSN.BackColor = Color.White;
+            labelRCaseSN.Location = new Point(515, 293);
+            labelRCaseSN.Name = "labelRCaseSN";
+            labelRCaseSN.Size = new Size(131, 23);
+            labelRCaseSN.TabIndex = 31;
+            labelRCaseSN.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label10
+            // 
+            label10.Location = new Point(372, 293);
+            label10.Name = "label10";
+            label10.Size = new Size(100, 23);
+            label10.TabIndex = 30;
+            label10.Text = "右耳盒子SN";
+            label10.TextAlign = ContentAlignment.MiddleRight;
             // 
             // labelLProduct
             // 
@@ -455,7 +563,7 @@
             label15.Name = "label15";
             label15.Size = new Size(100, 23);
             label15.TabIndex = 18;
-            label15.Text = "右耳MFI";
+            label15.Text = "右耳MFI Chip check";
             label15.TextAlign = ContentAlignment.MiddleRight;
             // 
             // labelLMFI
@@ -473,7 +581,7 @@
             label17.Name = "label17";
             label17.Size = new Size(100, 23);
             label17.TabIndex = 16;
-            label17.Text = "左耳MFI";
+            label17.Text = "左耳MFI Chip check";
             label17.TextAlign = ContentAlignment.MiddleRight;
             // 
             // labelRSoftVersion
@@ -630,37 +738,19 @@
             // 
             panel3.AutoScroll = true;
             panel3.Controls.Add(panel2);
-            panel3.Location = new Point(-20, 54);
+            panel3.Controls.Add(panel1);
+            panel3.Location = new Point(0, 63);
             panel3.Name = "panel3";
-            panel3.Size = new Size(776, 625);
+            panel3.Size = new Size(754, 656);
             panel3.TabIndex = 43;
-            // 
-            // labelRCaseSN
-            // 
-            labelRCaseSN.BackColor = Color.White;
-            labelRCaseSN.Location = new Point(515, 293);
-            labelRCaseSN.Name = "labelRCaseSN";
-            labelRCaseSN.Size = new Size(131, 23);
-            labelRCaseSN.TabIndex = 31;
-            labelRCaseSN.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // label10
-            // 
-            label10.Location = new Point(372, 293);
-            label10.Name = "label10";
-            label10.Size = new Size(100, 23);
-            label10.TabIndex = 30;
-            label10.Text = "右耳盒子SN";
-            label10.TextAlign = ContentAlignment.MiddleRight;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(754, 679);
+            ClientSize = new Size(754, 731);
             Controls.Add(label1);
             Controls.Add(menuStrip1);
-            Controls.Add(panel1);
             Controls.Add(panel3);
             Name = "Form1";
             Text = "TANC-HANC-读写";
@@ -732,5 +822,13 @@
         private Panel panel3;
         private Label labelRCaseSN;
         private Label label10;
+        private Label labelRReset;
+        private Label label20;
+        private Label labelLReset;
+        private Label label24;
+        private Label labelRShip;
+        private Label label12;
+        private Label labelLShip;
+        private Label label16;
     }
 }

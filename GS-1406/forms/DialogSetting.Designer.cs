@@ -37,7 +37,6 @@
             checkBoxGetMfi = new CheckBox();
             checkBoxGetSerialNum = new CheckBox();
             checkBoxSetSerialNum = new CheckBox();
-            checkBoxEnterDut = new CheckBox();
             checkBoxEnterShip = new CheckBox();
             label1 = new Label();
             textBoxVersion = new TextBox();
@@ -48,7 +47,7 @@
             labelPwd = new Label();
             textBoxPwd = new TextBox();
             checkBoxResetMode = new CheckBox();
-            textBox1 = new TextBox();
+            textBoxBatteryMin = new TextBox();
             label6 = new Label();
             checkBoxSetCaseSN = new CheckBox();
             checkBoxGetCaseSN = new CheckBox();
@@ -59,6 +58,11 @@
             panel1 = new Panel();
             panel2 = new Panel();
             panel3 = new Panel();
+            textBoxBatteryMax = new TextBox();
+            label7 = new Label();
+            groupBox1 = new GroupBox();
+            rbDouble = new RadioButton();
+            rbSingle = new RadioButton();
             textBoxHardVersion = new TextBox();
             comboBoxColor = new ComboBox();
             label4 = new Label();
@@ -66,6 +70,7 @@
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
+            groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // checkBoxGetColor
@@ -194,26 +199,12 @@
             checkBoxSetSerialNum.UseVisualStyleBackColor = false;
             checkBoxSetSerialNum.CheckedChanged += checkBoxSetSerialNum_CheckedChanged;
             // 
-            // checkBoxEnterDut
-            // 
-            checkBoxEnterDut.BackColor = SystemColors.ActiveCaption;
-            checkBoxEnterDut.Checked = true;
-            checkBoxEnterDut.CheckState = CheckState.Checked;
-            checkBoxEnterDut.Location = new Point(41, 135);
-            checkBoxEnterDut.Name = "checkBoxEnterDut";
-            checkBoxEnterDut.Size = new Size(110, 30);
-            checkBoxEnterDut.TabIndex = 11;
-            checkBoxEnterDut.Text = "DUT模式";
-            checkBoxEnterDut.TextAlign = ContentAlignment.MiddleCenter;
-            checkBoxEnterDut.UseVisualStyleBackColor = false;
-            checkBoxEnterDut.CheckedChanged += checkBoxEnterDut_CheckedChanged;
-            // 
             // checkBoxEnterShip
             // 
             checkBoxEnterShip.BackColor = SystemColors.ActiveCaption;
             checkBoxEnterShip.Checked = true;
             checkBoxEnterShip.CheckState = CheckState.Checked;
-            checkBoxEnterShip.Location = new Point(195, 135);
+            checkBoxEnterShip.Location = new Point(41, 137);
             checkBoxEnterShip.Name = "checkBoxEnterShip";
             checkBoxEnterShip.Size = new Size(110, 30);
             checkBoxEnterShip.TabIndex = 12;
@@ -306,7 +297,7 @@
             checkBoxResetMode.BackColor = SystemColors.ActiveCaption;
             checkBoxResetMode.Checked = true;
             checkBoxResetMode.CheckState = CheckState.Checked;
-            checkBoxResetMode.Location = new Point(349, 135);
+            checkBoxResetMode.Location = new Point(195, 137);
             checkBoxResetMode.Name = "checkBoxResetMode";
             checkBoxResetMode.Size = new Size(110, 30);
             checkBoxResetMode.TabIndex = 13;
@@ -315,14 +306,14 @@
             checkBoxResetMode.UseVisualStyleBackColor = false;
             checkBoxResetMode.CheckedChanged += checkBoxResetMode_CheckedChanged;
             // 
-            // textBox1
+            // textBoxBatteryMin
             // 
-            textBox1.Location = new Point(397, 484);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(109, 23);
-            textBox1.TabIndex = 83;
-            textBox1.Text = "80";
-            textBox1.TextChanged += textBox1_TextChanged;
+            textBoxBatteryMin.Location = new Point(397, 484);
+            textBoxBatteryMin.Name = "textBoxBatteryMin";
+            textBoxBatteryMin.Size = new Size(109, 23);
+            textBoxBatteryMin.TabIndex = 83;
+            textBoxBatteryMin.Text = "80";
+            textBoxBatteryMin.TextChanged += textBoxBatteryMin_TextChanged;
             // 
             // label6
             // 
@@ -331,7 +322,7 @@
             label6.Name = "label6";
             label6.Size = new Size(110, 30);
             label6.TabIndex = 82;
-            label6.Text = "电量设置";
+            label6.Text = "最低电量设置";
             label6.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // checkBoxSetCaseSN
@@ -417,7 +408,6 @@
             panel1.Controls.Add(checkBoxSetProductId);
             panel1.Controls.Add(checkBoxSetHardVersion);
             panel1.Controls.Add(checkBoxSetSerialNum);
-            panel1.Controls.Add(checkBoxEnterDut);
             panel1.Controls.Add(checkBoxEnterShip);
             panel1.Controls.Add(checkBoxResetMode);
             panel1.Location = new Point(12, 12);
@@ -444,6 +434,9 @@
             // panel3
             // 
             panel3.BackColor = SystemColors.ActiveCaption;
+            panel3.Controls.Add(textBoxBatteryMax);
+            panel3.Controls.Add(label7);
+            panel3.Controls.Add(groupBox1);
             panel3.Controls.Add(textBoxHardVersion);
             panel3.Controls.Add(comboBoxColor);
             panel3.Controls.Add(label4);
@@ -452,8 +445,62 @@
             panel3.Controls.Add(labelPwd);
             panel3.Location = new Point(12, 409);
             panel3.Name = "panel3";
-            panel3.Size = new Size(517, 199);
+            panel3.Size = new Size(517, 209);
             panel3.TabIndex = 93;
+            // 
+            // textBoxBatteryMax
+            // 
+            textBoxBatteryMax.Location = new Point(385, 109);
+            textBoxBatteryMax.Name = "textBoxBatteryMax";
+            textBoxBatteryMax.Size = new Size(109, 23);
+            textBoxBatteryMax.TabIndex = 85;
+            textBoxBatteryMax.Text = "80";
+            textBoxBatteryMax.TextChanged += textBoxBatteryMax_TextChanged;
+            // 
+            // label7
+            // 
+            label7.BackColor = SystemColors.ActiveCaption;
+            label7.Location = new Point(253, 106);
+            label7.Name = "label7";
+            label7.Size = new Size(110, 30);
+            label7.TabIndex = 84;
+            label7.Text = "最高电量设置";
+            label7.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(rbDouble);
+            groupBox1.Controls.Add(rbSingle);
+            groupBox1.Location = new Point(34, 166);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(199, 40);
+            groupBox1.TabIndex = 26;
+            groupBox1.TabStop = false;
+            // 
+            // rbDouble
+            // 
+            rbDouble.AutoSize = true;
+            rbDouble.Checked = true;
+            rbDouble.Location = new Point(114, 10);
+            rbDouble.Name = "rbDouble";
+            rbDouble.Size = new Size(50, 21);
+            rbDouble.TabIndex = 25;
+            rbDouble.TabStop = true;
+            rbDouble.Text = "双耳";
+            rbDouble.UseVisualStyleBackColor = true;
+            rbDouble.Click += rbDouble_Click;
+            // 
+            // rbSingle
+            // 
+            rbSingle.AutoSize = true;
+            rbSingle.Location = new Point(6, 13);
+            rbSingle.Name = "rbSingle";
+            rbSingle.Size = new Size(50, 21);
+            rbSingle.TabIndex = 24;
+            rbSingle.TabStop = true;
+            rbSingle.Text = "单耳";
+            rbSingle.UseVisualStyleBackColor = true;
+            rbSingle.Click += rbSingle_Click;
             // 
             // textBoxHardVersion
             // 
@@ -462,7 +509,7 @@
             textBoxHardVersion.Size = new Size(110, 23);
             textBoxHardVersion.TabIndex = 23;
             textBoxHardVersion.Text = "0.2";
-            textBoxHardVersion.TextChanged += textBoxHardVersion_TextChanged;
+            textBoxHardVersion.Leave += textBoxHardVersion_Leave;
             // 
             // comboBoxColor
             // 
@@ -470,7 +517,7 @@
             comboBoxColor.FormattingEnabled = true;
             comboBoxColor.ItemHeight = 17;
             comboBoxColor.Items.AddRange(new object[] { "black", "white" });
-            comboBoxColor.Location = new Point(384, 114);
+            comboBoxColor.Location = new Point(385, 138);
             comboBoxColor.Name = "comboBoxColor";
             comboBoxColor.Size = new Size(107, 25);
             comboBoxColor.TabIndex = 22;
@@ -479,7 +526,7 @@
             // label4
             // 
             label4.BackColor = SystemColors.ActiveCaption;
-            label4.Location = new Point(253, 114);
+            label4.Location = new Point(253, 138);
             label4.Name = "label4";
             label4.Size = new Size(110, 30);
             label4.TabIndex = 21;
@@ -503,7 +550,7 @@
             ClientSize = new Size(551, 695);
             Controls.Add(textBox2);
             Controls.Add(label3);
-            Controls.Add(textBox1);
+            Controls.Add(textBoxBatteryMin);
             Controls.Add(label6);
             Controls.Add(PortList);
             Controls.Add(label2);
@@ -523,6 +570,8 @@
             panel2.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -537,7 +586,6 @@
         private CheckBox checkBoxGetMfi;
         private CheckBox checkBoxGetSerialNum;
         private CheckBox checkBoxSetSerialNum;
-        private CheckBox checkBoxEnterDut;
         private CheckBox checkBoxEnterShip;
         private Label label1;
         private TextBox textBoxVersion;
@@ -548,7 +596,7 @@
         private Label labelPwd;
         private TextBox textBoxPwd;
         private CheckBox checkBoxResetMode;
-        private TextBox textBox1;
+        private TextBox textBoxBatteryMin;
         private Label label6;
         private CheckBox checkBoxSetCaseSN;
         private CheckBox checkBoxGetCaseSN;
@@ -563,5 +611,10 @@
         private Label label4;
         private Label label5;
         private TextBox textBoxHardVersion;
+        private RadioButton rbDouble;
+        private RadioButton rbSingle;
+        private GroupBox groupBox1;
+        private TextBox textBoxBatteryMax;
+        private Label label7;
     }
 }

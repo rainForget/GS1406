@@ -25,17 +25,19 @@ namespace ToolTest2.Bean
         private Boolean isSetCaseSerialNum = true;
         private Boolean isGetProductId = true;
         private Boolean isSetProductId = true;
-        private Boolean isEnterDutMode = true;
         private Boolean isEnterShipMode = true;
         private Boolean isGetChannel = true;
         private Boolean isResetMode = true;
         private string softVersion = "0.3.5";
         private string passWard = "Admin";
         private string portName = "COM3";
-        private string batteryValue = "80";
+        private string batteryValueMax = "90";
+        private string batteryValueMin = "70";
         private string productId = "S2SAW-S749";
         private string color = "black";
         private string hardVersion = "2.0";
+
+        private Boolean isDouble = true;
 
      
 
@@ -53,18 +55,18 @@ namespace ToolTest2.Bean
         public bool IsSetCaseSerialNum { get => isSetCaseSerialNum;set=> isSetCaseSerialNum = value; }
         public bool IsGetProductId { get => isGetProductId; set => isGetProductId = value; }
         public bool IsSetProductId { get => isSetProductId; set => isSetProductId = value; }
-        public bool IsEnterDutMode { get => isEnterDutMode; set => isEnterDutMode = value; }
         public bool IsEnterShipMode { get => isEnterShipMode; set => isEnterShipMode = value; }
         public string SoftVersion { get => softVersion; set => softVersion = value; }
         public string PassWard { get => passWard; set => passWard = value; }
         public string PortName { get => portName; set => portName = value; }
         public bool IsGetChannel { get=> isGetChannel; set => isGetChannel = value; }
         public bool IsResetMode { get => isResetMode; set => isResetMode = value; }
-        public string BatteryValue { get => batteryValue; set => batteryValue = value; }
+        public string BatteryValueMax { get => batteryValueMax; set => batteryValueMax = value; }
+        public string BatteryValueMin { get => batteryValueMin; set => batteryValueMin = value; }
         public string ProductId { get => productId; set => productId = value; }
         public string Color {  get => color; set => color = value;}
         public string HardVersion { get =>hardVersion; set => hardVersion = value; }
 
-
+        public bool IsDouble {  get => isDouble; set => isDouble = value; }
     }
 }
